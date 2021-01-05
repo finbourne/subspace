@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "subspace.fullname" . }}
+  labels:
+    {{- include "subspace.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.appConfig.httpPort }}
+      targetPort: http
+      protocol: TCP
+      name: http
+    - port: {{ .Values.appConfig.wireguardPort }}
+      targetPort: wireguard
+      protocol: TCP
+      name: wireguard
+  selector:
+    {{- include "subspace.selectorLabels" . | nindent 4 }}
