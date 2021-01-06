@@ -31,15 +31,15 @@ env:
     value: "true"
   # Optional variable to change upstream DNS provider 
   - name: "SUBSPACE_NAMESERVER"
-    value: "10.3.0.10"  # CoreDNS
+    value: "1.1.1.1"  # CoreDNS
   # Optional variables to change IPv4/v6 prefixes
   - name: "SUBSPACE_IPV4_POOL"
     value: "10.99.97.0/24"
   - name: "SUBSPACE_IPV6_POOL"
     value: ""
   # Optional variables to change IPv4/v6 Gateway
-  - name: "SUBSPACE_IPV4_GW"
-    value: "10.99.97.1"
+  # - name: "SUBSPACE_IPV4_GW"
+    # value: "10.99.97.1"
   - name: "SUBSPACE_IPV6_GW"
     value: ""
   # Optional variable to enable or disable IPv6 NAT

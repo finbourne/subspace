@@ -37,6 +37,7 @@ spec:
         - containerPort: {{ .Values.appConfig.httpPort }}
           name: http
         - containerPort: {{ .Values.appConfig.wireguardPort }}
+          protocol: UDP
           name: wireguard
         resources:
           {{- toYaml .Values.resources | nindent 12 }}
