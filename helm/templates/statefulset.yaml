@@ -62,19 +62,21 @@ spec:
             value: ":{{ .Values.appConfig.httpPort }}"
           - name: "SUBSPACE_LISTENPORT"
             value: "{{ .Values.appConfig.wireguardPort }}"
+          - name: "SUBSPACE_HTTP_PREFIX"
+            value: "{{ .Values.appConfig.httpPrefix }}"
           {{- toYaml .Values.env | nindent 10 }}
-        livenessProbe:
-          httpGet:
-            path: /
-            port: http
-          initialDelaySeconds: 15
-          timeoutSeconds: 5
-        readinessProbe:
-          httpGet:
-            path: /
-            port: http
-          initialDelaySeconds: 15
-          timeoutSeconds: 5
+        # livenessProbe:
+        #   httpGet:
+        #     path: {{ .Values.appConfig.httpPrefix }}/
+        #     port: http
+        #   initialDelaySeconds: 15
+        #   timeoutSeconds: 5
+        # readinessProbe:
+        #   httpGet:
+        #     path: {{ .Values.appConfig.httpPrefix }}/
+        #     port: http
+        #   initialDelaySeconds: 15
+        #   timeoutSeconds: 5
         # These volume mounts are persistent. They are like inline claims,
         # but not exactly because the names need to match exactly one of
         # the stateful pod volumes.

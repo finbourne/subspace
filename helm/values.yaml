@@ -8,7 +8,7 @@ image:
   repository: finbourne/subspace
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "0.0.1"
+  tag: "0.0.2"
 
 appConfig:
   # Change WireGuard Listenport
@@ -19,6 +19,11 @@ appConfig:
   dataVolumeSize: 1Gi
   # Storage class for this PV.
   storageClassName:
+  # Optional variable for changing the routing of the server.
+  # i.e. a value /something
+  # would set the server to listen at http://localhost${SUBSPACE_HTTP_PREFIX}/paths
+  # if blank you do not need to put '/'.
+  httpPrefix: ""
 
 # Subspace accepts a number of options as
 # environment variables.
@@ -69,7 +74,7 @@ service:
 
 ingress:
   enabled: false
-  annotations: {}
+  annotations:
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
   hosts:

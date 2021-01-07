@@ -40,14 +40,15 @@ type Web struct {
 	template string
 
 	// Default
-	Backlink string
-	Version  string
-	Request  *http.Request
-	Section  string
-	Time     time.Time
-	Info     Info
-	Admin    bool
-	SAML     *samlsp.Middleware
+	URIPrefix string
+	Backlink  string
+	Version   string
+	Request   *http.Request
+	Section   string
+	Time      time.Time
+	Info      Info
+	Admin     bool
+	SAML      *samlsp.Middleware
 
 	User     User
 	Users    []User
@@ -140,17 +141,17 @@ func (w *Web) HTML() {
 
 func (w *Web) Redirect(format string, a ...interface{}) {
 	location := fmt.Sprintf(format, a...)
-	http.Redirect(w.w, w.r, location, http.StatusFound)
+	http.Redirect(w.w, w.r, prefixedRoute(location), http.StatusFound)
 }
 
 func WebHandler(h func(*Web), section string) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		web := &Web{
-			w:        w,
-			r:        r,
-			ps:       ps,
-			template: section + ".html",
-
+			w:             w,
+			r:             r,
+			ps:            ps,
+			template:      section + ".html",
+			URIPrefix:     httpPrefix,
 			Backlink:      backlink,
 			Time:          time.Now(),
 			Version:       version,
@@ -251,6 +252,7 @@ func staticHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params)
 }
 
 func serveAsset(w http.ResponseWriter, r *http.Request, filename string) {
+	filename = strings.TrimPrefix(filename, httpPrefix)
 	path := "static" + filename
 
 	b, err := Asset(path)

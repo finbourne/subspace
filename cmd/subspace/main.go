@@ -85,6 +85,7 @@ func init() {
 	cli.StringVar(&datadir, "datadir", "/data", "data dir")
 	cli.StringVar(&backlink, "backlink", "/", "backlink (optional)")
 	cli.StringVar(&httpHost, "http-host", "", "HTTP host")
+	cli.StringVar(&httpPrefix, "http-prefix", "", "HTTP route prefix")
 	cli.StringVar(&httpAddr, "http-addr", ":80", "HTTP listen address")
 	cli.BoolVar(&httpInsecure, "http-insecure", false, "enable sessions cookies for http (no https) not recommended")
 	cli.BoolVar(&letsencrypt, "letsencrypt", true, "enable TLS using Let's Encrypt on port 443")
@@ -92,6 +93,10 @@ func init() {
 	cli.BoolVar(&showHelp, "help", false, "display help and exit")
 	cli.BoolVar(&debug, "debug", false, "debug mode")
 	cli.StringVar(&semanticTheme, "theme", "green", "Semantic-ui theme to use")
+}
+
+func prefixedRoute(r string) string {
+	return fmt.Sprintf("%s%s", httpPrefix, r)
 }
 
 func main() {
@@ -158,40 +163,41 @@ func main() {
 	// Routes
 	//
 	r := &httprouter.Router{}
-	r.GET("/", Log(WebHandler(indexHandler, "index")))
-	r.GET("/help", Log(WebHandler(helpHandler, "help")))
-	r.GET("/configure", Log(WebHandler(configureHandler, "configure")))
-	r.POST("/configure", Log(WebHandler(configureHandler, "configure")))
+
+	r.GET(prefixedRoute("/"), Log(WebHandler(indexHandler, "index")))
+	r.GET(prefixedRoute("/help"), Log(WebHandler(helpHandler, "help")))
+	r.GET(prefixedRoute("/configure"), Log(WebHandler(configureHandler, "configure")))
+	r.POST(prefixedRoute("/configure"), Log(WebHandler(configureHandler, "configure")))
 
 	// SAML
-	r.GET("/sso", Log(ssoHandler))
-	r.GET("/saml/metadata", Log(samlHandler))
-	r.POST("/saml/metadata", Log(samlHandler))
-	r.GET("/saml/acs", Log(samlHandler))
-	r.POST("/saml/acs", Log(samlHandler))
+	r.GET(prefixedRoute("/sso"), Log(ssoHandler))
+	r.GET(prefixedRoute("/saml/metadata"), Log(samlHandler))
+	r.POST(prefixedRoute("/saml/metadata"), Log(samlHandler))
+	r.GET(prefixedRoute("/saml/acs"), Log(samlHandler))
+	r.POST(prefixedRoute("/saml/acs"), Log(samlHandler))
 
-	r.GET("/signin", Log(WebHandler(signinHandler, "signin")))
-	r.GET("/signout", Log(WebHandler(signoutHandler, "signout")))
-	r.POST("/signin", Log(WebHandler(signinHandler, "signin")))
-	r.GET("/forgot", Log(WebHandler(forgotHandler, "forgot")))
-	r.POST("/forgot", Log(WebHandler(forgotHandler, "forgot")))
+	r.GET(prefixedRoute("/signin"), Log(WebHandler(signinHandler, "signin")))
+	r.GET(prefixedRoute("/signout"), Log(WebHandler(signoutHandler, "signout")))
+	r.POST(prefixedRoute("/signin"), Log(WebHandler(signinHandler, "signin")))
+	r.GET(prefixedRoute("/forgot"), Log(WebHandler(forgotHandler, "forgot")))
+	r.POST(prefixedRoute("/forgot"), Log(WebHandler(forgotHandler, "forgot")))
 
-	r.GET("/settings", Log(WebHandler(settingsHandler, "settings")))
-	r.POST("/settings", Log(WebHandler(settingsHandler, "settings")))
+	r.GET(prefixedRoute("/settings"), Log(WebHandler(settingsHandler, "settings")))
+	r.POST(prefixedRoute("/settings"), Log(WebHandler(settingsHandler, "settings")))
 
-	r.GET("/user/edit/:user", Log(WebHandler(userEditHandler, "user/edit")))
-	r.POST("/user/edit", Log(WebHandler(userEditHandler, "user/edit")))
-	r.GET("/user/delete/:user", Log(WebHandler(userDeleteHandler, "user/delete")))
-	r.POST("/user/delete", Log(WebHandler(userDeleteHandler, "user/delete")))
+	r.GET(prefixedRoute("/user/edit/:user"), Log(WebHandler(userEditHandler, "user/edit")))
+	r.POST(prefixedRoute("/user/edit"), Log(WebHandler(userEditHandler, "user/edit")))
+	r.GET(prefixedRoute("/user/delete/:user"), Log(WebHandler(userDeleteHandler, "user/delete")))
+	r.POST(prefixedRoute("/user/delete"), Log(WebHandler(userDeleteHandler, "user/delete")))
 
-	r.GET("/profile/add", Log(WebHandler(profileAddHandler, "profile/add")))
-	r.POST("/profile/add", Log(WebHandler(profileAddHandler, "profile/add")))
-	r.GET("/profile/connect/:profile", Log(WebHandler(profileConnectHandler, "profile/connect")))
-	r.GET("/profile/delete/:profile", Log(WebHandler(profileDeleteHandler, "profile/delete")))
-	r.POST("/profile/delete", Log(WebHandler(profileDeleteHandler, "profile/delete")))
-	r.GET("/profile/config/wireguard/:profile", Log(WebHandler(wireguardConfigHandler, "profile/config/wireguard")))
-	r.GET("/profile/qrconfig/wireguard/:profile", Log(WebHandler(wireguardQRConfigHandler, "profile/qrconfig/wireguard")))
-	r.GET("/static/*path", staticHandler)
+	r.GET(prefixedRoute("/profile/add"), Log(WebHandler(profileAddHandler, "profile/add")))
+	r.POST(prefixedRoute("/profile/add"), Log(WebHandler(profileAddHandler, "profile/add")))
+	r.GET(prefixedRoute("/profile/connect/:profile"), Log(WebHandler(profileConnectHandler, "profile/connect")))
+	r.GET(prefixedRoute("/profile/delete/:profile"), Log(WebHandler(profileDeleteHandler, "profile/delete")))
+	r.POST(prefixedRoute("/profile/delete"), Log(WebHandler(profileDeleteHandler, "profile/delete")))
+	r.GET(prefixedRoute("/profile/config/wireguard/:profile"), Log(WebHandler(wireguardConfigHandler, "profile/config/wireguard")))
+	r.GET(prefixedRoute("/profile/qrconfig/wireguard/:profile"), Log(WebHandler(wireguardQRConfigHandler, "profile/qrconfig/wireguard")))
+	r.GET(prefixedRoute("/static/*path"), staticHandler)
 
 	//
 	// Server
@@ -242,7 +248,7 @@ func main() {
 	// http redirect to https and Let's Encrypt auth
 	go func() {
 		redir := httprouter.New()
-		redir.GET("/*path", func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+		redir.GET(prefixedRoute("/*path"), func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 			r.URL.Scheme = "https"
 			r.URL.Host = httpHost
 			http.Redirect(w, r, r.URL.String(), http.StatusFound)
@@ -307,7 +313,7 @@ func main() {
 	logger.Infof("Subspace version: %s %s", version, &url.URL{
 		Scheme: "https",
 		Host:   hostport,
-		Path:   "/",
+		Path:   prefixedRoute("/"),
 	})
 	logger.Fatal(httpsd.Serve(tlsListener))
 }
@@ -366,7 +372,7 @@ func configureSAML() error {
 	rootURL := url.URL{
 		Scheme: "https",
 		Host:   httpHost,
-		Path:   "/",
+		Path:   prefixedRoute("/"),
 	}
 
 	if httpInsecure {

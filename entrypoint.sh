@@ -14,6 +14,10 @@ if [ -z "${SUBSPACE_BACKLINK-}" ]; then
   export SUBSPACE_BACKLINK="/"
 fi
 
+if [ -z "${SUBSPACE_HTTP_PREFIX-}" ]; then
+  export SUBSPACE_HTTP_PREFIX=""
+fi
+
 if [ -z "${SUBSPACE_IPV4_POOL-}" ]; then
   export SUBSPACE_IPV4_POOL="10.99.97.0/24"
 fi
@@ -214,6 +218,7 @@ if ! test -d /etc/service/subspace; then
 #!/bin/sh
 source /etc/envvars
 exec /usr/bin/subspace \
+    "--http-prefix=${SUBSPACE_HTTP_PREFIX}" \
     "--http-host=${SUBSPACE_HTTP_HOST}" \
     "--http-addr=${SUBSPACE_HTTP_ADDR}" \
     "--http-insecure=${SUBSPACE_HTTP_INSECURE}" \

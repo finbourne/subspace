@@ -15,7 +15,7 @@
                         Admin account is setup. Configure SAML for SSO (optional).
                     {{end}}
                 </div>
-                <a class="close-link" href="/settings"><i class="close icon"></i></a>
+                <a class="close-link" href="{{$.URIPrefix}}/settings"><i class="close icon"></i></a>
             </div>
             <div class="ui hidden divider"></div>
         {{end}}
@@ -35,7 +35,7 @@
             <div class="ui hidden divider"></div>
         {{end}}
 
-        <form class="ui huge form" action="/settings" method="POST" novalidate autocomplete="off">
+        <form class="ui huge form" action="{{$.URIPrefix}}/settings" method="POST" novalidate autocomplete="off">
             <div class="ui {{$.SemanticTheme}} dividing header">Single Sign-On (SAML)</div>
             <div class="ui message">
                 <i class="info circle grey icon"></i>
@@ -51,11 +51,11 @@
 
             <div class="field">
                 <div class="ui small header">Your ACS URL</div>
-                <input class="readonly-input" type="text" value="https://{{$.Request.Host}}/saml/acs" readonly>
+                <input class="readonly-input" type="text" value="https://{{$.Request.Host}}{{$.URIPrefix}}/saml/acs" readonly>
             </div>
             <div class="field">
                 <div class="ui small header">Your Entity ID</div>
-                <input class="readonly-input" type="text" value="https://{{$.Request.Host}}/saml/metadata" readonly>
+                <input class="readonly-input" type="text" value="https://{{$.Request.Host}}{{$.URIPrefix}}/saml/metadata" readonly>
             </div>
             <div class="field">
                 <div class="ui small header">IDP Metadata</div>
@@ -66,7 +66,7 @@
                 <div class="field mobile hidden">&nbsp;</div>
                 <div class="field">
                     <div class="two ui buttons">
-                        <a href="/" class="ui huge button">Cancel</a>
+                        <a href="{{$.URIPrefix}}" class="ui huge button">Cancel</a>
                         <button type="submit" class="ui huge {{$.SemanticTheme}} button">Save</button>
                     </div>
                 </div>
@@ -93,7 +93,7 @@
                 <div class="field mobile hidden">&nbsp;</div>
                 <div class="field">
                     <div class="two ui buttons">
-                        <a href="/" class="ui huge button">Cancel</a>
+                        <a href="{{$.URIPrefix}}" class="ui huge button">Cancel</a>
                         <button type="submit" class="ui huge {{$.SemanticTheme}} button">Save</button>
                     </div>
                 </div>
