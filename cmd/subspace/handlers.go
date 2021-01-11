@@ -30,7 +30,7 @@ func getEnv(key, fallback string) string {
 
 func ssoHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	if token := samlSP.GetAuthorizationToken(r); token != nil {
-		http.Redirect(w, r, "/", http.StatusFound)
+		http.Redirect(w, r, prefixedRoute("/"), http.StatusFound)
 		return
 	}
 	logger.Debugf("SSO: require account handler")

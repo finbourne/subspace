@@ -15,7 +15,7 @@ if [ -z "${SUBSPACE_BACKLINK-}" ]; then
 fi
 
 if [ -z "${SUBSPACE_HTTP_PREFIX-}" ]; then
-  export SUBSPACE_HTTP_PREFIX=""
+  export SUBSPACE_HTTP_PREFIX="http"
 fi
 
 if [ -z "${SUBSPACE_IPV4_POOL-}" ]; then
@@ -138,6 +138,7 @@ fi
 #
 # WireGuard (${SUBSPACE_IPV4_POOL})
 #
+mkdir -p /data
 if ! test -d /data/wireguard; then
   mkdir /data/wireguard
   cd /data/wireguard
@@ -211,13 +212,7 @@ RUNIT
   chmod +x /etc/service/dnsmasq/log/run
 fi
 
-# subspace service
-if ! test -d /etc/service/subspace; then
-  mkdir /etc/service/subspace
-  cat <<RUNIT >/etc/service/subspace/run
-#!/bin/sh
-source /etc/envvars
-exec /usr/bin/subspace \
+/usr/bin/subspace \
     "--http-prefix=${SUBSPACE_HTTP_PREFIX}" \
     "--http-host=${SUBSPACE_HTTP_HOST}" \
     "--http-addr=${SUBSPACE_HTTP_ADDR}" \
@@ -225,17 +220,3 @@ exec /usr/bin/subspace \
     "--backlink=${SUBSPACE_BACKLINK}" \
     "--letsencrypt=${SUBSPACE_LETSENCRYPT}" \
     "--theme=${SUBSPACE_THEME}"
-RUNIT
-  chmod +x /etc/service/subspace/run
-
-  # subspace service log
-  mkdir /etc/service/subspace/log
-  mkdir /etc/service/subspace/log/main
-  cat <<RUNIT >/etc/service/subspace/log/run
-#!/bin/sh
-exec svlogd -tt ./main
-RUNIT
-  chmod +x /etc/service/subspace/log/run
-fi
-
-exec $@

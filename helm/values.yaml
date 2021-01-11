@@ -33,7 +33,7 @@ env:
   - name: "SUBSPACE_LETSENCRYPT"
     value: "false"
   - name: "SUBSPACE_HTTP_INSECURE"
-    value: "true"
+    value: "false"
   # Optional variable to change upstream DNS provider 
   - name: "SUBSPACE_NAMESERVER"
     value: "1.1.1.1"  # CoreDNS

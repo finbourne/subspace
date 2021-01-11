@@ -142,7 +142,7 @@
             </div>
 
             <div class="ui hidden divider"></div>
-            <img class="ui centered medium image" src="/profile/qrconfig/wireguard/{{$.Profile.ID}}" alt="qr-code could not be displayed">
+            <img class="ui centered medium image" src="{{$.URIPrefix}}/profile/qrconfig/wireguard/{{$.Profile.ID}}" alt="qr-code could not be displayed">
 
         {{else if eq $.Profile.Platform "android"}}
             <div class="ui large header"><i class="android icon"></i> Android &mdash; Instructions</div>
@@ -174,7 +174,7 @@
             </div>
 
             <div class="ui hidden divider"></div>
-            <img class="ui centered medium image" src="/profile/qrconfig/wireguard/{{$.Profile.ID}}" alt="qr-code could not be displayed">
+            <img class="ui centered medium image" src="{{$.URIPrefix}}/profile/qrconfig/wireguard/{{$.Profile.ID}}" alt="qr-code could not be displayed">
 
         {{else if eq $.Profile.Platform "linux"}}
             <div class="ui large header"><i class="linux icon"></i> Linux &mdash; Instructions</div>
