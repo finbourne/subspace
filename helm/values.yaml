@@ -8,7 +8,7 @@ image:
   repository: finbourne/subspace
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "0.0.2"
+  tag: "0.0.3"
 
 appConfig:
   # Change WireGuard Listenport
@@ -50,6 +50,9 @@ env:
   # Optional variable to enable or disable IPv6 NAT
   - name: "SUBSPACE_IPV6_NAT_ENABLED"
     value: "0"
+  # Specify which IPs should be loaded into the client config.
+  - name: "SUBSPACE_ALLOWED_IPS"
+    value: "8.8.8.8/32,1.1.1.1/32,2.2.2.2/32"
 
 imagePullSecrets: []
 nameOverride: ""
