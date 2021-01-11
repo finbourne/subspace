@@ -64,6 +64,8 @@ spec:
             value: "{{ .Values.appConfig.wireguardPort }}"
           - name: "SUBSPACE_HTTP_PREFIX"
             value: "{{ .Values.appConfig.httpPrefix }}"
+          - name: "SUBSPACE_ALLOWED_IPS"
+            value: "{{ join ","  .Values.appConfig.allowedIPs }}"
           {{- toYaml .Values.env | nindent 10 }}
         # livenessProbe:
         #   httpGet:
