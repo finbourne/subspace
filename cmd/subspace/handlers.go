@@ -374,6 +374,10 @@ func profileAddHandler(w *Web) {
 	if cidr := getEnv("SUBSPACE_IPV4_CIDR", "nil"); cidr != "nil" {
 		ipv4Cidr = cidr
 	}
+	nameserver := "1.1.1.1"
+	if ns := getEnv("SUBSPACE_NAMESERVER", "nil"); ns != "nil" {
+		nameserver = ns
+	}
 	ipv6Pref := "fd00::10:97:"
 	if pref := getEnv("SUBSPACE_IPV6_PREF", "nil"); pref != "nil" {
 		ipv6Pref = pref
@@ -407,6 +411,8 @@ func profileAddHandler(w *Web) {
 		ipv6Enabled = false
 	}
 
+
+
 	script := `
 cd {{$.Datadir}}/wireguard
 wg_private_key="$(wg genkey)"
@@ -423,7 +429,7 @@ WGPEER
 cat <<WGCLIENT >clients/{{$.Profile.ID}}.conf
 [Interface]
 PrivateKey = ${wg_private_key}
-DNS = {{if .Ipv4Enabled}}{{$.IPv4Gw}}{{end}}{{if .Ipv6Enabled}}{{if .Ipv4Enabled}},{{end}}{{$.IPv6Gw}}{{end}}
+DNS = {{if .Ipv4Enabled}}{{$.Nameserver}}{{end}}{{if .Ipv6Enabled}}{{if .Ipv4Enabled}},{{end}}{{$.IPv6Gw}}{{end}}
 Address = {{if .Ipv4Enabled}}{{$.IPv4Pref}}{{$.Profile.Number}}/{{$.IPv4Cidr}}{{end}}{{if .Ipv6Enabled}}{{if .Ipv4Enabled}},{{end}}{{$.IPv6Pref}}{{$.Profile.Number}}/{{$.IPv6Cidr}}{{end}}
 
 [Peer]
@@ -447,6 +453,7 @@ WGCLIENT
 		AllowedIPS   string
 		Ipv4Enabled  bool
 		Ipv6Enabled  bool
+		Nameserver   string
 	}{
 		profile,
 		endpointHost,
@@ -461,6 +468,7 @@ WGCLIENT
 		allowedips,
 		ipv4Enabled,
 		ipv6Enabled,
+		nameserver,
 	})
 	if err != nil {
 		logger.Warn(err)
